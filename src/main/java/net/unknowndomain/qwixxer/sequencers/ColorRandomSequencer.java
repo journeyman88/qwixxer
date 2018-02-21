@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 m.bignami.
+ * Copyright 2018 Marco Bignami.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class ColorRandomSequencer extends Sequencer {
     
-    private final Comparator<Casella> ordinatore = new OrdinatoreCaselle();
+    private static final Comparator<Casella> ORDINATORE = new OrdinatoreCaselle();
     
     @Override
     public List<List<Casella>> creaSequenze(boolean terminatoreRandom)
@@ -78,11 +78,11 @@ public class ColorRandomSequencer extends Sequencer {
                     terminatori.remove(idt);
                     if (termVal > 7)
                     {
-                        tempSeq.sort(ordinatore);
+                        tempSeq.sort(ORDINATORE);
                     }
                     else
                     {
-                        tempSeq.sort(ordinatore.reversed());
+                        tempSeq.sort(ORDINATORE.reversed());
                     }
                     sequences.add(tempSeq);
                 }
@@ -99,10 +99,10 @@ public class ColorRandomSequencer extends Sequencer {
             sequences.get(1).add(creaCasella(12, Colore.GIALLO, true));
             sequences.get(2).add(creaCasella(2, Colore.VERDE, true));
             sequences.get(3).add(creaCasella(2, Colore.BLU, true));
-            sequences.get(0).sort(ordinatore);
-            sequences.get(1).sort(ordinatore);
-            sequences.get(2).sort(ordinatore.reversed());
-            sequences.get(3).sort(ordinatore.reversed());
+            sequences.get(0).sort(ORDINATORE);
+            sequences.get(1).sort(ORDINATORE);
+            sequences.get(2).sort(ORDINATORE.reversed());
+            sequences.get(3).sort(ORDINATORE.reversed());
         }
         return sequences;
     }

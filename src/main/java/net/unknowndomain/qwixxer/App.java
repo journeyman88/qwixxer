@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 m.bignami.
+ * Copyright 2018 Marco Bignami.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author m.bignami
+ * @author journeyman
  */
 public class App {
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
@@ -36,7 +36,9 @@ public class App {
     {
         OPTIONS = new Options();
         OPTIONS.addOption("t", "text", false, "");
-        OPTIONS.addOption("s", "sequencer", true, "");
+        OPTIONS.addOption("f", "full-random", false, "");
+        OPTIONS.addOption("c", "random-color", false, "");
+        OPTIONS.addOption("r", "random-order", false, "");
         OPTIONS.addOption("o", "output", true, "");
         OPTIONS.addOption("p", "print", false, "");
         OPTIONS.addOption("h", "help", false, "");
@@ -50,9 +52,9 @@ public class App {
             boolean printHelp = cmd.hasOption("h");
             if (cmd.hasOption("t"))
             {
-                printHelp = printHelp  || !cmd.hasOption("s");
+                boolean invalidSequencer = !(cmd.hasOption("f") || cmd.hasOption("c") || cmd.hasOption("r"));
                 boolean invalidOutput = cmd.hasOption("h");
-                printHelp = printHelp  || invalidOutput;
+                printHelp = printHelp  || invalidOutput || invalidSequencer;
                 
             }
             if (printHelp)

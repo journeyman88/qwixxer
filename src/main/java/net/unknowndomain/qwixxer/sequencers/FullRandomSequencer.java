@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 m.bignami.
+ * Copyright 2018 Marco Bignami.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class FullRandomSequencer extends Sequencer {
     
-    private final Comparator<Casella> disordinatore = new DisordinatoreCaselle();
+    private static final Comparator<Casella> DISORDINATORE = new DisordinatoreCaselle();
     
     
     @Override
@@ -94,7 +94,7 @@ public class FullRandomSequencer extends Sequencer {
         }
         for (List<Casella> line : sequences)
         {
-            line.sort(disordinatore);
+            line.sort(DISORDINATORE);
         }
         return sequences;
     }
