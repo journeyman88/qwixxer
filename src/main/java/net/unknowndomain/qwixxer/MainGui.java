@@ -151,7 +151,7 @@ public class MainGui extends javax.swing.JFrame {
         try {
             File tmp = File.createTempFile("qwixxer", "pdf");
             Generator.generatePdfFile(getSequencer(), getRandomEnd(), getScoresheetNumber(), tmp);
-            printPdfFile(tmp);
+            Gutenberg.printPdfFileDialog(tmp);
             tmp.deleteOnExit();
         } catch (IOException ex) {
             LOGGER.error(null, ex);
@@ -167,8 +167,7 @@ public class MainGui extends javax.swing.JFrame {
             {
                 File file = fileSaver.getSelectedFile();
                 if (!FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("pdf")) {
-                    file = new File(file.toString() + ".pdf");  // append .xml if "foo.jpg.xml" is OK
-                    file = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName())+".pdf"); // ALTERNATIVELY: remove the extension (if any) and replace it with ".xml"
+                    file = new File(file.toString() + ".pdf");
                 }
                 file.createNewFile();
                 Generator.generatePdfFile(getSequencer(), getRandomEnd(), getScoresheetNumber(), file);
@@ -213,20 +212,6 @@ public class MainGui extends javax.swing.JFrame {
     private boolean getRandomEnd()
     {
         return !endsCheckbox.isSelected();
-    }
-    
-    private void printPdfFile(File toPrint)
-    {
-        try (PDDocument document = PDDocument.load(toPrint)) {
-            
-            PrinterJob job = PrinterJob.getPrinterJob();
-            job.setPageable(new PDFPageable(document));
-            if (job.printDialog()) {
-                job.print();
-            }
-        } catch (IOException | PrinterException ex) {
-            LOGGER.error("Errore in stampa",ex);
-        }
     }
     
     private void setLocked(boolean locked)

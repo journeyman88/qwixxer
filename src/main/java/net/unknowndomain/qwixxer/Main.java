@@ -15,11 +15,15 @@
  */
 package net.unknowndomain.qwixxer;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import net.unknowndomain.qwixxer.sequencers.FullRandomSequencer;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
+import net.unknowndomain.qwixxer.sequencers.Sequencer;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +35,49 @@ public class Main {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     
-    public static void main(String [] args) throws FileNotFoundException
+    private final Sequencer sequencer;
+    private final boolean randomEnd;
+    private final int sheetNumber;
+    
+    public Main(Sequencer.Available sequencer, Boolean randomEnd, Integer sheetNumber)
     {
-        LOGGER.info("Inizio {}", new Date());
-        OutputStream pdfFile = new FileOutputStream("/home/m.bignami/Desktop/sample1.pdf");
-        Generator.generatePdf(new FullRandomSequencer(), true, 10, pdfFile);
-        LOGGER.info("Fine {}", new Date());
+        this.sequencer = Sequencer.getInstance(sequencer);
+        if (randomEnd == null)
+        {
+            randomEnd = true;
+        }
+        this.randomEnd = randomEnd;
+        if (sheetNumber == null)
+        {
+            sheetNumber = 10;
+        }
+        this.sheetNumber = sheetNumber;
+    }
+    
+    public void savePdf(String fileOutput)
+    {
+        try {
+            File file = new File(fileOutput);
+            if (!FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("pdf")) {
+                file = new File(file.toString() + ".pdf");
+            }
+            file.createNewFile();
+            Generator.generatePdfFile(sequencer, randomEnd, sheetNumber, file);
+        } catch (IOException ex) {
+            LOGGER.error(null, ex);
+        }
+    }
+    
+    public void printPdf()
+    {
+        try {
+            File tmp = File.createTempFile("qwixxer", "pdf");
+            Generator.generatePdfFile(sequencer, randomEnd, sheetNumber, tmp);
+            Gutenberg.printPdfFileSilent(tmp);
+            tmp.deleteOnExit();
+        } catch (IOException ex) {
+            LOGGER.error(null, ex);
+        }
     }
     
 }
