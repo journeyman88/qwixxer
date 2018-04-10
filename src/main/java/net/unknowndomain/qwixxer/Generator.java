@@ -27,7 +27,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.Phaser;
+import java.util.logging.Level;
 import net.unknowndomain.qwixxer.common.Casella;
 import net.unknowndomain.qwixxer.imaging.Scoresheet;
 import net.unknowndomain.qwixxer.sequencers.Sequencer;
@@ -41,30 +48,7 @@ import org.slf4j.LoggerFactory;
 public class Generator {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(Generator.class);
-    
-    public static final BufferedImage generateJavaImage(Sequencer sequencer, boolean randomEnd)
-    {
-        BufferedImage retVal;
-        try {
-            List<List<Casella>> sequences = sequencer.creaSequenze(randomEnd);
-            if (LOGGER.isDebugEnabled())
-            {
-                sequences.stream().forEach((seq) -> {
-                    LOGGER.debug("{},{},{},{},{},{},{},{},{},{},{}", seq);
-                });
-            }
-            retVal = Scoresheet.make(sequences);
-        } catch (IOException ex) {
-            LOGGER.error("Eccezione in generazione immagine",ex);
-            retVal = null;
-        }
-        return retVal;
-    }
-    
-//    public static final byte [] generateBinaryImage(Sequencer sequencer, boolean lockedEnd) throws IOException
-//    {
-//        return Scoresheet.make(sequences);
-//    }
+    private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
     
     public static final byte [] generatePdfData(Sequencer sequencer, boolean randomEnd, int sheetNumber)
     {
@@ -84,20 +68,24 @@ public class Generator {
     
     public static final void generatePdf(Sequencer sequencer, boolean randomEnd, int sheetNumber, OutputStream outputStream)
     {
+        Phaser phaser = new Phaser();
+        phaser.register();
         try {
+            List<Future<BufferedImage>> results = new ArrayList<>(sheetNumber);
+            for (int i = 0; i<sheetNumber; i++)
+            {
+                results.add(EXECUTOR.submit(new Scoresheet(sequencer, randomEnd, phaser)));
+            }
             Document document = new Document(PageSize.A4);
-//            Document document = new Document();
             document.setMargins(30, 30, 30, 30);
             PdfWriter.getInstance(document, outputStream);
             document.open();
             PdfPTable table = new PdfPTable(2);
             table.setWidthPercentage(90f);
-            Image pdfImg;
-            BufferedImage score;
-            for (int i=0; i<sheetNumber; i++)
+            phaser.arriveAndAwaitAdvance();
+            for (Future<BufferedImage> score : results)
             {
-                score = Generator.generateJavaImage(sequencer, randomEnd);
-                pdfImg = Image.getInstance(score, null);
+                Image pdfImg = Image.getInstance(score.get(), null);
                 table.addCell(pdfImg);
             }
             if ((sheetNumber % 2) > 0)
@@ -106,9 +94,10 @@ public class Generator {
             }
             document.add(table);
             document.close();
-        } catch (DocumentException | IOException ex) {
+        } catch (DocumentException | IOException | InterruptedException | ExecutionException ex) {
             LOGGER.error("Eccezione in generazione pdf",ex);
         }
+        phaser.arriveAndDeregister();
     }
     
 }

@@ -15,8 +15,6 @@
  */
 package net.unknowndomain.qwixxer;
 
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
@@ -29,8 +27,6 @@ import net.unknowndomain.qwixxer.sequencers.FullRandomSequencer;
 import net.unknowndomain.qwixxer.sequencers.OrderRandomSequencer;
 import net.unknowndomain.qwixxer.sequencers.Sequencer;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.printing.PDFPageable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

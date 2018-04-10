@@ -19,13 +19,45 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Phaser;
 import net.unknowndomain.qwixxer.common.Casella;
+import net.unknowndomain.qwixxer.sequencers.Sequencer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author journeyman
  */
-public class Scoresheet {
+public class Scoresheet implements Callable<BufferedImage> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Scoresheet.class);
+    private final Sequencer sequencer;
+    private final boolean randomEnd;
+    private final Phaser phaser;
+    
+    public Scoresheet(Sequencer sequencer, boolean randomEnd, Phaser phaser)
+    {
+        this.sequencer = sequencer;
+        this.randomEnd = randomEnd;
+        this.phaser = phaser;
+        phaser.register();
+    }
+    
+    @Override
+    public BufferedImage call() throws IOException
+    {
+        BufferedImage retVal;
+        List<List<Casella>> sequences = sequencer.creaSequenze(randomEnd);
+        if (LOGGER.isDebugEnabled())
+        {
+            sequences.stream().forEach((seq) -> {
+                LOGGER.debug("{},{},{},{},{},{},{},{},{},{},{}", seq);
+            });
+        }
+        phaser.arriveAndDeregister();
+        return Scoresheet.make(sequences);
+    }
     
     public static BufferedImage make(List<List<Casella>> sequences) throws IOException
     {
@@ -62,5 +94,8 @@ public class Scoresheet {
         magicPen.dispose();
         return scoresheet;
     }
+    
+    
+    
     
 }

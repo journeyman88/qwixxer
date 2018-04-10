@@ -29,9 +29,9 @@ import java.util.Random;
 public abstract class Sequencer {
     
     public enum Available {
+        FULL_RANDOM("interface.sequencers.fullRandom"),
         RANDOM_COLOR("interface.sequencers.randomColor"),
-        RANDOM_ORDER("interface.sequencers.randomOrder"),
-        FULL_RANDOM("interface.sequencers.fullRandom");
+        RANDOM_ORDER("interface.sequencers.randomOrder");
         
         Available(String bundleKey)
         {
