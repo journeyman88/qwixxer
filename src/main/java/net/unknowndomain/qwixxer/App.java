@@ -94,7 +94,7 @@ public class App {
                     Integer number = null;
                     if (cmd.hasOption("n"))
                     {
-                        number = Integer.parseInt(cmd.getOptionValue("n", "10"));
+                        number = Integer.valueOf(cmd.getOptionValue("n", "10"));
                     }
                     Boolean defined = cmd.hasOption("e");
                     Main main = new Main(seq, defined, number);

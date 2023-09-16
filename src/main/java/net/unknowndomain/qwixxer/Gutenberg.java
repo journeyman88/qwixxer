@@ -19,6 +19,7 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPageable;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class Gutenberg {
     
     public static void printPdfFileDialog(File toPrint)
     {
-        try (PDDocument document = PDDocument.load(toPrint)) 
+        try (PDDocument document = Loader.loadPDF(toPrint)) 
         {
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPageable(new PDFPageable(document));
@@ -48,7 +49,7 @@ public class Gutenberg {
     
     public static void printPdfFileSilent(File toPrint)
     {
-        try (PDDocument document = PDDocument.load(toPrint))
+        try (PDDocument document = Loader.loadPDF(toPrint))
         {
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPageable(new PDFPageable(document));

@@ -34,8 +34,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.Phaser;
-import java.util.logging.Level;
-import net.unknowndomain.qwixxer.common.Casella;
 import net.unknowndomain.qwixxer.imaging.Scoresheet;
 import net.unknowndomain.qwixxer.sequencers.Sequencer;
 import org.slf4j.Logger;
